@@ -51,18 +51,18 @@ document.querySelectorAll('form.contact').forEach(function (form) {
       .then(function (res) {
         if (res.ok) {
           form.reset();
-          status.textContent = 'Message sent. I’ll reply soon.';
+          status.textContent = "Thanks. Your message is in. I'll reply within 24 hours.";
           status.className = 'form-status ok';
         } else {
           return res.json().then(function (j) {
             var msg = (j.errors || []).map(function (x) { return x.message; }).join(', ');
-            status.textContent = msg || 'Something went wrong. Email me directly.';
+            status.textContent = msg || 'Something went wrong. Email adrian@riveraferran.com directly.';
             status.className = 'form-status err';
           });
         }
       })
       .catch(function () {
-        status.textContent = 'Network error. Email me directly.';
+        status.textContent = 'Something went wrong. Email adrian@riveraferran.com directly.';
         status.className = 'form-status err';
       });
   });
