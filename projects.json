@@ -577,6 +577,12 @@
           "src": "Videos/Food/sobao-cidrines-social-media-food-videographer-puerto-rico-2022.mp4",
           "livid": "https://livid.com/embed/gD-po8B9sea9",
           "ratio": "9 / 16"
+        },
+        {
+          "title": "BOD — Grabación febrero",
+          "src": "Sobao by Los Cidrines/BOD-22-0245 Grabacion BOD febrero REV.mp4",
+          "livid": "https://livid.com/embed/Ct0NGs4qn0ks",
+          "ratio": "16 / 9"
         }
       ]
     },
@@ -635,7 +641,32 @@
           "alt": "Acai Express photograph"
         }
       ],
-      "videos": []
+      "videos": [
+        {
+          "title": "Commercial",
+          "src": "Acai Express/Commercial FINAL.mp4",
+          "livid": "https://livid.com/embed/5HSMj7C1lgi6",
+          "ratio": "16 / 9"
+        },
+        {
+          "title": "COVID-19 Lifestyle",
+          "src": "Acai Express/COVID19 - Lifestyle.mp4",
+          "livid": "https://livid.com/embed/3CwAe3_UxbC7",
+          "ratio": "16 / 9"
+        },
+        {
+          "title": "Lifestyle — Jiu Jitsu",
+          "src": "Acai Express/Lifestyle - Jiu Jitsu Revised.mp4",
+          "livid": "https://livid.com/embed/scfgd5MNufog",
+          "ratio": "16 / 9"
+        },
+        {
+          "title": "Truck animation",
+          "src": "Acai Express/Truck animation REVISED 4.m4v",
+          "livid": "https://livid.com/embed/myDK79jCqScT",
+          "ratio": "9 / 16"
+        }
+      ]
     },
     {
       "slug": "chef-mia-castro",
@@ -712,7 +743,20 @@
           "alt": "THUMBNAIL3, Chef Mia Castro"
         }
       ],
-      "videos": []
+      "videos": [
+        {
+          "title": "Episode preview",
+          "src": "Chef Mia Castro/CUTDOWN 2 - Episode Preview (9x16) v3.mp4",
+          "livid": "https://livid.com/embed/x9wVwIHDDonT",
+          "ratio": "9 / 16"
+        },
+        {
+          "title": "Sabor y Sazón — Episode 1",
+          "src": "Chef Mia Castro/Ep1 Sabor y Sazon v7.mp4",
+          "livid": "https://livid.com/embed/RRaM9Nvh86G9",
+          "ratio": "16 / 9"
+        }
+      ]
     },
     {
       "slug": "gyro-king",
@@ -797,8 +841,14 @@
       "featured": false,
       "description": "",
       "photos": [],
-      "videos": [],
-      "hidden": true
+      "videos": [
+        {
+          "title": "Blue Moon x Checkin Mela",
+          "src": "Blue Moon/Blue Moon x Checkin Mela blurred.mov",
+          "livid": "https://livid.com/embed/RxeZNSjHgRvE",
+          "ratio": "16 / 9"
+        }
+      ]
     },
     {
       "slug": "joe-and-joe",
@@ -810,8 +860,14 @@
       "featured": false,
       "description": "",
       "photos": [],
-      "videos": [],
-      "hidden": true
+      "videos": [
+        {
+          "title": "Joe & Joe",
+          "src": "Joe & Joe/Joe&Joe 25 de julio REVISADO.mp4",
+          "livid": "https://livid.com/embed/5BxltzPKG0CV",
+          "ratio": "16 / 9"
+        }
+      ]
     },
     {
       "slug": "bodeguita-manolo",

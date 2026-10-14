@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-05T10:52:24",
+  "generated": "2026-10-14T10:30:24",
   "source_root": "/Volumes/personal_folder/Selected Works",
   "projects": {
     "chip-city": {
@@ -676,6 +676,13 @@
           "poster": "assets/video/posters/sobao-cidrines-v01.jpg",
           "livid": "https://livid.com/embed/gD-po8B9sea9",
           "ratio": "9 / 16"
+        },
+        {
+          "title": "BOD — Grabación febrero",
+          "mp4": "",
+          "poster": "assets/video/posters/sobao-cidrines-v02.jpg",
+          "livid": "https://livid.com/embed/Ct0NGs4qn0ks",
+          "ratio": "16 / 9"
         }
       ]
     },
@@ -749,7 +756,36 @@
           "alt": "Acai Express photograph"
         }
       ],
-      "videos": []
+      "videos": [
+        {
+          "title": "Commercial",
+          "mp4": "",
+          "poster": "assets/video/posters/acai-express-v01.jpg",
+          "livid": "https://livid.com/embed/5HSMj7C1lgi6",
+          "ratio": "16 / 9"
+        },
+        {
+          "title": "COVID-19 Lifestyle",
+          "mp4": "",
+          "poster": "assets/video/posters/acai-express-v02.jpg",
+          "livid": "https://livid.com/embed/3CwAe3_UxbC7",
+          "ratio": "16 / 9"
+        },
+        {
+          "title": "Lifestyle — Jiu Jitsu",
+          "mp4": "",
+          "poster": "assets/video/posters/acai-express-v03.jpg",
+          "livid": "https://livid.com/embed/scfgd5MNufog",
+          "ratio": "16 / 9"
+        },
+        {
+          "title": "Truck animation",
+          "mp4": "",
+          "poster": "assets/video/posters/acai-express-v04.jpg",
+          "livid": "https://livid.com/embed/myDK79jCqScT",
+          "ratio": "9 / 16"
+        }
+      ]
     },
     "nyc-food-stills": {
       "photos": [
@@ -904,7 +940,22 @@
           "alt": "THUMBNAIL3, Chef Mia Castro"
         }
       ],
-      "videos": []
+      "videos": [
+        {
+          "title": "Episode preview",
+          "mp4": "",
+          "poster": "assets/video/posters/chef-mia-castro-v01.jpg",
+          "livid": "https://livid.com/embed/x9wVwIHDDonT",
+          "ratio": "9 / 16"
+        },
+        {
+          "title": "Sabor y Sazón — Episode 1",
+          "mp4": "",
+          "poster": "assets/video/posters/chef-mia-castro-v02.jpg",
+          "livid": "https://livid.com/embed/RRaM9Nvh86G9",
+          "ratio": "16 / 9"
+        }
+      ]
     },
     "gyro-king": {
       "photos": [
@@ -988,11 +1039,27 @@
     },
     "blue-moon": {
       "photos": [],
-      "videos": []
+      "videos": [
+        {
+          "title": "Blue Moon x Checkin Mela",
+          "mp4": "",
+          "poster": "assets/video/posters/blue-moon-v01.jpg",
+          "livid": "https://livid.com/embed/RxeZNSjHgRvE",
+          "ratio": "16 / 9"
+        }
+      ]
     },
     "joe-and-joe": {
       "photos": [],
-      "videos": []
+      "videos": [
+        {
+          "title": "Joe & Joe",
+          "mp4": "",
+          "poster": "assets/video/posters/joe-and-joe-v01.jpg",
+          "livid": "https://livid.com/embed/5BxltzPKG0CV",
+          "ratio": "16 / 9"
+        }
+      ]
     }
   }
 }
