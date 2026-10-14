@@ -34,6 +34,22 @@ gives it no card, no number and no gallery page (`build.py` deletes a stale
 Livid-only videos may have `mp4 = ""` in the manifest: the page renders only the Livid iframe,
 and tests and `prepare_assets.py` do not expect an mp4 file.
 
+## Masthead (homepage hero)
+
+The homepage hero is the "TBS" cookie-stack photo, built as three files by
+`python3 scripts/build_masthead.py` (idempotent; it prints a size table):
+
+- `assets/img/masthead/tbs-desktop-back.jpg` — full-bleed desktop back plate (2560×1440)
+- `assets/img/masthead/tbs-desktop-front.webp` — the subject cut out with alpha,
+  drawn above the giant name on desktop
+- `assets/img/masthead/tbs-phone-back.jpg` — phone background (1170×2535)
+
+The source PNGs live in the media folder's `_masthead/` directory on Adrian's
+Desktop (staged, gitignored, in `staging/masthead-src/`). On phones
+(viewport ≤ 720px) there is no cut-out effect: the phone background photo is
+shown and the front layer is not rendered or even downloaded. The 3200×1800 /
+1200×2600 canvases and their safe zones are documented in `_masthead/SPEC.txt`.
+
 ## Design system
 
 Light editorial theme: warm paper ground, ink type, one bold accent. Everything is

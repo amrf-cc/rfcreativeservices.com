@@ -22,7 +22,10 @@
 ${NAV}
 <main>
 <section class="masthead">
-  <img class="layer back" src="${ROOT_PREFIX}${HERO_IMAGE}" alt="${HERO_CAPTION}">
+  <picture>
+    <source media="(max-width: 720px)" srcset="${ROOT_PREFIX}${HERO_IMAGE_PHONE}">
+    <img class="layer back" src="${ROOT_PREFIX}${HERO_IMAGE}" alt="${HERO_CAPTION}" fetchpriority="high" decoding="async">
+  </picture>
   <div class="layer scrim"></div>
 
   <div class="stack">
@@ -40,7 +43,10 @@ ${NAV}
     </div>
   </div>
 
-  <img class="layer front" src="${ROOT_PREFIX}${HERO_CUTOUT}" alt="" aria-hidden="true">
+  <picture>
+    <source media="(max-width: 720px)" srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+    <img class="layer front" src="${ROOT_PREFIX}${HERO_CUTOUT}" alt="" aria-hidden="true" decoding="async">
+  </picture>
 </section>
 
 <section id="work">

@@ -219,8 +219,8 @@ section + section { border-top: 1px solid var(--line-soft); }
   position: relative;
   z-index: 4;
   display: flex;
-  justify-content: space-between;
-  gap: 24px;
+  justify-content: flex-start;
+  gap: clamp(28px, 4vw, 64px);
   font-size: clamp(12px, 1.06vw, 16px);
   color: #fff;
   text-transform: capitalize;
@@ -510,5 +510,6 @@ footer.site a:hover { text-decoration: underline; }
     line-height: 0.88;
   }
   .masthead .name .w, .masthead .name .last { display: block; }
-  .masthead .labels { flex-direction: column; gap: 6px; font-size: 12px; }
+  .masthead .front { display: none; }
+  .masthead .labels { flex-direction: column; gap: 6px; font-size: 12px; text-shadow: 0 1px 10px rgba(0,0,0,.65), 0 0 3px rgba(0,0,0,.45); }
 }

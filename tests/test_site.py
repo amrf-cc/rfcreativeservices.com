@@ -25,6 +25,17 @@ class LinkExtractor(HTMLParser):
             self.links.append(d["href"])
         if tag in ("img", "script") and d.get("src"):
             self.links.append(d["src"])
+        if tag in ("img", "source") and d.get("srcset"):
+            srcset = d["srcset"].strip()
+            if not srcset.startswith("data:"):
+                for candidate in srcset.split(","):
+                    candidate = candidate.strip()
+                    if not candidate:
+                        continue
+                    token = candidate.split()[0] if candidate.split() else ""
+                    if not token or token.startswith("data:"):
+                        continue
+                    self.links.append(token)
         if tag == "link" and d.get("href"):
             self.links.append(d["href"])
         if tag in ("video", "source") and d.get("src"):
@@ -126,6 +137,32 @@ class TestSiteGenerated(unittest.TestCase):
 
     def test_cname(self):
         self.assertEqual((ROOT / "CNAME").read_text().strip(), "riveraferran.com")
+
+    def test_masthead_picture_markup(self):
+        config = load("site-config.json")
+        text = (ROOT / "index.html").read_text()
+        phone_sources = re.findall(
+            r'<source[^>]*media="\(max-width: 720px\)"[^>]*srcset="([^"]+)"',
+            text)
+        self.assertIn(config["hero_image_phone"], phone_sources,
+                      "phone <source> should point at hero_image_phone")
+        gif_sources = re.findall(
+            r'<source[^>]*srcset="(data:image/gif[^"]*)"', text)
+        self.assertTrue(gif_sources, "missing data:image/gif <source>")
+        self.assertRegex(
+            text, r'<img[^>]*class="layer front"[^>]*src="%s"'
+            % re.escape(config["hero_cutout"]),
+            "front img should point at hero_cutout")
+
+    def test_phone_hides_front_layer(self):
+        text = (ROOT / "assets/css/styles.css").read_text()
+        match = re.search(r'@media\s*\(max-width:\s*720px\)\s*\{(.*?)\n\}',
+                          text, flags=re.DOTALL)
+        self.assertIsNotNone(match, "no @media (max-width: 720px) block")
+        self.assertRegex(
+            match.group(1),
+            r'\.masthead\s+\.front\s*\{\s*display:\s*none;?\s*\}',
+            "phone block must hide .masthead .front")
 
     def test_contact_form_present_on_index_and_contact(self):
         config = load("site-config.json")

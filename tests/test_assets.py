@@ -11,11 +11,14 @@ sys.path.insert(0, str(ROOT))
 import ingest_media  # noqa: E402
 import prepare_assets  # noqa: E402
 
-HERO_PATHS = [
+GALLERY_PATHS = [
     "assets/img/acai-express/01.jpg",
-    "assets/img/masthead",
-    "assets/img/og-cover.jpg",
 ]
+
+MASTHEAD_DIR = ROOT / "assets/img/masthead"
+MASTHEAD_DESKTOP_BACK = MASTHEAD_DIR / "tbs-desktop-back.jpg"
+MASTHEAD_DESKTOP_FRONT = MASTHEAD_DIR / "tbs-desktop-front.webp"
+MASTHEAD_PHONE_BACK = MASTHEAD_DIR / "tbs-phone-back.jpg"
 
 
 class TestSourcesExist(unittest.TestCase):
@@ -77,8 +80,8 @@ class TestBuiltAssets(unittest.TestCase):
                                     "missing %s" % poster_path)
 
 
-class TestHeroUntouched(unittest.TestCase):
-    def test_hero_unchanged(self):
+class TestGalleryPhotoUntouched(unittest.TestCase):
+    def test_gallery_photo_unchanged(self):
         try:
             probe = subprocess.run(
                 ["git", "rev-parse", "--is-inside-work-tree"],
@@ -88,10 +91,35 @@ class TestHeroUntouched(unittest.TestCase):
         if probe.returncode != 0 or probe.stdout.strip() != "true":
             self.skipTest("ROOT is not a git repository")
         result = subprocess.run(
-            ["git", "diff", "--quiet", "HEAD", "--"] + HERO_PATHS,
+            ["git", "diff", "--quiet", "HEAD", "--"] + GALLERY_PATHS,
             cwd=str(ROOT), capture_output=True)
         self.assertNotEqual(result.returncode, 1,
-                            "hero/masthead/og-cover assets were modified")
+                            "gallery photo was modified")
+
+
+class TestMastheadAssets(unittest.TestCase):
+    def test_masthead_assets(self):
+        for path in (MASTHEAD_DESKTOP_BACK, MASTHEAD_DESKTOP_FRONT,
+                     MASTHEAD_PHONE_BACK):
+            self.assertTrue(path.exists(), "missing %s" % path)
+        self.assertLess(MASTHEAD_DESKTOP_BACK.stat().st_size, 900 * 1024,
+                        "desktop back JPEG too big — recompress")
+        self.assertLess(MASTHEAD_DESKTOP_FRONT.stat().st_size, 450 * 1024,
+                        "desktop front WebP too big — recompress")
+        self.assertLess(MASTHEAD_PHONE_BACK.stat().st_size, 750 * 1024,
+                        "phone back JPEG too big — recompress")
+        try:
+            from PIL import Image
+        except ImportError:
+            self.skipTest("PIL not importable; skipping dimension checks")
+        with Image.open(MASTHEAD_DESKTOP_BACK) as im:
+            self.assertEqual(im.size, (2560, 1440))
+            self.assertEqual(im.format, "JPEG")
+        with Image.open(MASTHEAD_DESKTOP_FRONT) as im:
+            self.assertEqual(im.size, (2560, 1440))
+            self.assertIn("A", im.getbands())
+        with Image.open(MASTHEAD_PHONE_BACK) as im:
+            self.assertEqual(im.size, (1170, 2535))
 
 
 class TestIngestIdempotent(unittest.TestCase):

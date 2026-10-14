@@ -175,6 +175,7 @@ def main():
         name_masthead = '<span class="w">%s</span>' % esc(config["name"])
     page = render_page("index.html.tmpl", "", config, {
         "HERO_IMAGE": esc(config["hero_image"]),
+        "HERO_IMAGE_PHONE": esc(config.get("hero_image_phone", config["hero_image"])),
         "HERO_CAPTION": esc(config["hero_caption"]),
         "META_DESCRIPTION": esc(config["title"] + " — " + config["based"]),
         "BIO_PARAGRAPHS": bio,
