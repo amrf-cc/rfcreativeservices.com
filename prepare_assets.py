@@ -17,6 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SOURCE_ROOT = Path("/Volumes/personal_folder/Selected Works")
+MEDIA_ROOT = Path("/Volumes/Scratch Disk/Projects/Websites/riveraferran.com-media")
 FFMPEG = shutil.which("ffmpeg") or "/Users/adrianriveraferran/.hermes/tools/ffmpeg-9.0.1-darwin-arm64/ffmpeg"
 FULL_MAX_PX, FULL_Q = "2000", "72"
 THUMB_MAX_PX, THUMB_Q = "640", "70"
@@ -29,17 +30,28 @@ def load_projects():
 
 
 def photo_src(rel_name):
+    media = MEDIA_ROOT / rel_name
+    if media.exists():
+        return media
     return SOURCE_ROOT / "Photos" / rel_name
 
 
 def video_src(rel_path):
+    media = MEDIA_ROOT / rel_path
+    if media.exists():
+        return media
     return SOURCE_ROOT / rel_path
 
 
 def check_sources(projects):
-    """Return list of missing source paths (empty = all good)."""
+    """Return list of missing source paths (empty = all good).
+
+    Hidden projects are kept in the data but never checked or regenerated.
+    """
     missing = []
     for p in projects:
+        if p.get("hidden"):
+            continue
         for photo in p["photos"]:
             s = photo_src(photo["src"])
             if not s.exists():
@@ -106,6 +118,11 @@ def main():
         print("CHECK_OK")
         return
 
+    manifest_path = ROOT / "assets-manifest.json"
+    existing = {}
+    if manifest_path.exists():
+        existing = json.loads(manifest_path.read_text()).get("projects", {})
+
     manifest = {
         "generated": datetime.datetime.now().isoformat(timespec="seconds"),
         "source_root": str(SOURCE_ROOT),
@@ -113,6 +130,12 @@ def main():
     }
     for p in projects:
         slug = p["slug"]
+        if p.get("hidden"):
+            # Keep hidden projects' existing entry byte-for-byte; regeneration
+            # would rewrite assets that must stay untouched.
+            manifest["projects"][slug] = existing.get(slug, {"photos": [], "videos": []})
+            print("hidden %s -> carried over unchanged" % slug)
+            continue
         entry = {"photos": [], "videos": []}
         for i, photo in enumerate(p["photos"], start=1):
             idx = "%02d" % i
@@ -126,16 +149,27 @@ def main():
             idx = "v%02d" % i
             mp4 = "assets/video/%s-%s.mp4" % (slug, idx)
             poster = "assets/video/posters/%s-%s.jpg" % (slug, idx)
-            size_mb = compress_video(video_src(v["src"]), ROOT / mp4)
-            video_poster(video_src(v["src"]), ROOT / poster)
+            if v.get("mp4") == "":
+                # Livid-only video: no self-hosted file. Only extract a poster
+                # if a source clip is available.
+                src = video_src(v["src"]) if v.get("src") else None
+                if src is not None and src.exists():
+                    video_poster(src, ROOT / poster)
+                else:
+                    poster = ""
+                mp4 = ""
+                print("video  %s -> (livid only, no self-hosted mp4)" % v["src"])
+            else:
+                size_mb = compress_video(video_src(v["src"]), ROOT / mp4)
+                video_poster(video_src(v["src"]), ROOT / poster)
+                print("video  %s -> %s (%.1f MB)" % (v["src"], mp4, size_mb))
             entry["videos"].append({"title": v["title"], "mp4": mp4,
                                     "poster": poster, "livid": v.get("livid", ""),
                                     "ratio": v.get("ratio", "")})
-            print("video  %s -> %s (%.1f MB)" % (v["src"], mp4, size_mb))
         manifest["projects"][slug] = entry
 
     out = ROOT / "assets-manifest.json"
-    out.write_text(json.dumps(manifest, indent=2) + "\n")
+    out.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
     total = sum(f.stat().st_size for f in (ROOT / "assets").rglob("*") if f.is_file())
     print("Wrote %s. assets/ total: %.1f MB. PREPARE_OK" % (out.name, total / 1e6))
 

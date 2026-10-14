@@ -105,10 +105,12 @@ def video_block_html(v, root_prefix):
     if v.get("livid"):
         frame = ('<iframe src="%s" allow="autoplay; fullscreen; picture-in-picture" '
                  'allowfullscreen title="%s"></iframe>' % (esc(v["livid"]), esc(v["title"])))
-    else:
+    elif v.get("mp4"):
         frame = ('<video controls preload="none" poster="%s%s" playsinline>'
                  '<source src="%s%s" type="video/mp4"></video>'
                  % (root_prefix, v["poster"], root_prefix, v["mp4"]))
+    else:
+        return ""
     ratio = v.get("ratio") or "16 / 9"
     return ('    <div class="video-block">\n      <div class="frame" style="aspect-ratio:%s">%s</div>\n'
             '      <p class="vtitle">%s</p>\n    </div>' % (esc(ratio), frame, esc(v["title"])))
@@ -153,12 +155,13 @@ def render_page(template_name, root_prefix, config, extra, page_key=""):
 def main():
     config = load("site-config.json")
     projects = load("projects.json")["projects"]
+    visible = [p for p in projects if not p.get("hidden")]
     manifest = load("assets-manifest.json")
-    numbers = {p["slug"]: i + 1 for i, p in enumerate(projects)}
+    numbers = {p["slug"]: i + 1 for i, p in enumerate(visible)}
 
     # index.html — first featured project leads, the rest fill the grid
     bio = "\n".join("      <p>%s</p>" % esc(b) for b in config["bio"])
-    featured = [p for p in projects if p.get("featured")]
+    featured = [p for p in visible if p.get("featured")]
     lead, rest = (featured[0], featured[1:]) if featured else (None, [])
     feature = feature_html(lead, manifest, "", numbers[lead["slug"]]) if lead else ""
     cards = "\n".join(card_html(p, manifest, "", numbers[p["slug"]]) for p in rest)
@@ -190,7 +193,7 @@ def main():
     (ROOT / "index.html").write_text(page)
 
     # gallery.html
-    all_cards = "\n".join(card_html(p, manifest, "", numbers[p["slug"]], show_number=False) for p in projects)
+    all_cards = "\n".join(card_html(p, manifest, "", numbers[p["slug"]], show_number=False) for p in visible)
     page = render_page("gallery.html.tmpl", "", config, {"ALL_CARDS": all_cards},
                        page_key="gallery")
     (ROOT / "gallery.html").write_text(page)
@@ -202,10 +205,16 @@ def main():
     # gallery/<slug>.html
     (ROOT / "gallery").mkdir(exist_ok=True)
     for p in projects:
+        if p.get("hidden"):
+            stale = ROOT / "gallery" / (p["slug"] + ".html")
+            if stale.exists():
+                stale.unlink()
+            continue
         data = manifest["projects"][p["slug"]]
         rp = "../"
-        if data["videos"]:
-            vids = "\n".join(video_block_html(v, rp) for v in data["videos"])
+        blocks = [b for b in (video_block_html(v, rp) for v in data["videos"]) if b]
+        if blocks:
+            vids = "\n".join(blocks)
             video_section = ('    <p class="kicker">Video</p>\n    <div class="videos">\n%s\n    </div>' % vids)
         else:
             video_section = ""
@@ -231,7 +240,7 @@ def main():
     (ROOT / "CNAME").write_text(config["domain"] + "\n")
 
     print("Built index.html, gallery.html, contact.html, 404.html, CNAME, "
-          "and %d project pages. BUILD_OK" % len(projects))
+          "and %d project pages. BUILD_OK" % len(visible))
 
 
 if __name__ == "__main__":
