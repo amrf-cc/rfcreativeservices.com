@@ -44,6 +44,26 @@ class LinkExtractor(HTMLParser):
             self.links.append(d["poster"])
 
 
+class MetaTagParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.meta = {}
+
+    def handle_starttag(self, tag, attrs):
+        if tag != "meta":
+            return
+        d = dict(attrs)
+        key = d.get("property") or d.get("name")
+        if key and "content" in d:
+            self.meta.setdefault(key, []).append(d["content"])
+
+
+def meta_tags(html_path):
+    parser = MetaTagParser()
+    parser.feed(html_path.read_text())
+    return parser.meta
+
+
 def local_links(html_path):
     parser = LinkExtractor()
     parser.feed(html_path.read_text())
@@ -58,6 +78,12 @@ def local_links(html_path):
 
 def generated_pages():
     pages = [ROOT / n for n in ("index.html", "gallery.html", "contact.html", "404.html")]
+    pages += sorted((ROOT / "gallery").glob("*.html"))
+    return pages
+
+
+def social_pages():
+    pages = [ROOT / n for n in ("index.html", "gallery.html", "contact.html")]
     pages += sorted((ROOT / "gallery").glob("*.html"))
     return pages
 
@@ -196,6 +222,51 @@ class TestSiteGenerated(unittest.TestCase):
                 text = (ROOT / "gallery" / (slug + ".html")).read_text()
                 rendered = (livid and livid in text) or (mp4 and mp4 in text)
                 self.assertTrue(rendered, "no video rendered on %s" % slug)
+
+    def test_social_tags_are_absolute(self):
+        base = "https://" + load("site-config.json")["domain"]
+        pages = social_pages()
+        self.assertTrue(pages, "no pages found")
+        for page in pages:
+            if not page.exists():
+                continue
+            meta = meta_tags(page)
+            for key in ("og:image", "og:url", "twitter:image"):
+                self.assertIn(key, meta, "missing %s on %s" % (key, page.name))
+            og_image = meta["og:image"][0]
+            og_url = meta["og:url"][0]
+            twitter_image = meta["twitter:image"][0]
+            self.assertTrue(og_image.startswith(base + "/"),
+                            "og:image not absolute on %s: %s" % (page.name, og_image))
+            self.assertTrue(og_url.startswith(base + "/"),
+                            "og:url not absolute on %s: %s" % (page.name, og_url))
+            self.assertEqual(og_image, twitter_image,
+                             "og:image != twitter:image on %s" % page.name)
+            rel = page.relative_to(ROOT).as_posix()
+            expected = base + "/" if rel == "index.html" else base + "/" + rel
+            self.assertEqual(og_url, expected, "wrong og:url on %s" % page.name)
+
+    def test_og_image_resolves_locally(self):
+        base = "https://" + load("site-config.json")["domain"]
+        meta = meta_tags(ROOT / "index.html")
+        self.assertIn("og:image", meta, "missing og:image on index.html")
+        og_image = meta["og:image"][0]
+        self.assertTrue(og_image.startswith(base + "/"),
+                        "og:image not absolute: %s" % og_image)
+        rel = og_image[len(base) + 1:]
+        target = ROOT / rel
+        self.assertTrue(target.exists(), "og:image missing on disk: %s" % rel)
+        self.assertGreater(target.stat().st_size, 20 * 1024,
+                           "og:image is suspiciously small: %s" % rel)
+        try:
+            from PIL import Image
+        except ImportError:
+            return
+        with Image.open(target) as img:
+            self.assertEqual(img.size, (1200, 630),
+                             "og:image should be 1200x630: %s" % rel)
+            self.assertEqual(img.format, "JPEG",
+                             "og:image should be JPEG: %s" % rel)
 
 
 if __name__ == "__main__":

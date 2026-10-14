@@ -122,7 +122,8 @@ def photo_button_html(ph, root_prefix):
             % (root_prefix, ph["full"], esc(ph["alt"]), root_prefix, ph["thumb"], esc(ph["alt"])))
 
 
-def render_page(template_name, root_prefix, config, extra, page_key=""):
+def render_page(template_name, root_prefix, config, extra, page_key="", og_path=""):
+    site_url = "https://" + config["domain"].rstrip("/")
     nav = tmpl("nav.html.tmpl").safe_substitute(
         ROOT_PREFIX=root_prefix,
         NAME=esc(config["name"]),
@@ -147,6 +148,9 @@ def render_page(template_name, root_prefix, config, extra, page_key=""):
         "NAV": nav,
         "FOOTER": footer,
         "CONTACT_FORM": form,
+        "SITE_URL": esc(site_url),
+        "OG_IMAGE": esc(site_url + "/assets/img/og-cover.jpg"),
+        "OG_URL": esc(site_url + "/" + og_path),
     }
     vars_.update(extra)
     return tmpl(template_name).safe_substitute(**vars_)
@@ -190,17 +194,17 @@ def main():
         "CTA": esc(config["cta"]),
         "FEATURE": feature,
         "FEATURED_CARDS": cards,
-    }, page_key="home")
+    }, page_key="home", og_path="")
     (ROOT / "index.html").write_text(page)
 
     # gallery.html
     all_cards = "\n".join(card_html(p, manifest, "", numbers[p["slug"]], show_number=False) for p in visible)
     page = render_page("gallery.html.tmpl", "", config, {"ALL_CARDS": all_cards},
-                       page_key="gallery")
+                       page_key="gallery", og_path="gallery.html")
     (ROOT / "gallery.html").write_text(page)
 
     # contact.html
-    page = render_page("contact.html.tmpl", "", config, {}, page_key="contact")
+    page = render_page("contact.html.tmpl", "", config, {}, page_key="contact", og_path="contact.html")
     (ROOT / "contact.html").write_text(page)
 
     # gallery/<slug>.html
@@ -232,7 +236,7 @@ def main():
             "DESCRIPTION": esc(p["description"]),
             "VIDEO_SECTION": video_section,
             "PHOTO_SECTION": photo_section,
-        }, page_key="project")
+        }, page_key="project", og_path="gallery/" + p["slug"] + ".html")
         (ROOT / "gallery" / (p["slug"] + ".html")).write_text(page)
 
     # 404 + CNAME
