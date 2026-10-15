@@ -102,7 +102,7 @@ class TestMastheadAssets(unittest.TestCase):
         for path in (MASTHEAD_DESKTOP_BACK, MASTHEAD_DESKTOP_FRONT,
                      MASTHEAD_PHONE_BACK):
             self.assertTrue(path.exists(), "missing %s" % path)
-        self.assertLess(MASTHEAD_DESKTOP_BACK.stat().st_size, 900 * 1024,
+        self.assertLess(MASTHEAD_DESKTOP_BACK.stat().st_size, 600 * 1024,
                         "desktop back JPEG too big — recompress")
         self.assertLess(MASTHEAD_DESKTOP_FRONT.stat().st_size, 450 * 1024,
                         "desktop front WebP too big — recompress")
@@ -113,10 +113,10 @@ class TestMastheadAssets(unittest.TestCase):
         except ImportError:
             self.skipTest("PIL not importable; skipping dimension checks")
         with Image.open(MASTHEAD_DESKTOP_BACK) as im:
-            self.assertEqual(im.size, (2560, 1440))
+            self.assertEqual(im.size, (3200, 1800))
             self.assertEqual(im.format, "JPEG")
         with Image.open(MASTHEAD_DESKTOP_FRONT) as im:
-            self.assertEqual(im.size, (2560, 1440))
+            self.assertEqual(im.size, (3200, 1800))
             self.assertIn("A", im.getbands())
         with Image.open(MASTHEAD_PHONE_BACK) as im:
             self.assertEqual(im.size, (1170, 2535))

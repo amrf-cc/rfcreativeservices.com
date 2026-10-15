@@ -50,7 +50,7 @@ rights back onto the re-encoded files, then `build.py` re-hashes the URLs.
 The homepage hero is the "TBS" cookie-stack photo, built as three files by
 `python3 scripts/build_masthead.py` (idempotent; it prints a size table):
 
-- `assets/img/masthead/tbs-desktop-back.jpg` — full-bleed desktop back plate (2560×1440)
+- `assets/img/masthead/tbs-desktop-back.jpg` — full-bleed desktop back plate (3200×1800)
 - `assets/img/masthead/tbs-desktop-front.webp` — the subject cut out with alpha,
   drawn above the giant name on desktop
 - `assets/img/masthead/tbs-phone-back.jpg` — phone background (1170×2535)
