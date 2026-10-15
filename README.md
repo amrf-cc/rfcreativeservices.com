@@ -44,6 +44,7 @@ skipping any thumbnail that is already big enough (use `--force` to override, `-
 to only preview). Re-run it after uploading via the content manager, since new uploads
 arrive with 640px thumbs. Run `scripts/stamp_metadata.py` afterwards to stamp captions and
 rights back onto the re-encoded files, then `build.py` re-hashes the URLs.
+Large homepage cards load the full-size photo; small gallery cards use the thumbnail.
 
 ## Masthead (homepage hero)
 

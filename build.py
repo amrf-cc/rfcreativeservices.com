@@ -69,12 +69,13 @@ def lead_media(data):
     return None, ""
 
 
-def card_html(p, manifest, root_prefix, num, show_number=True):
+def card_html(p, manifest, root_prefix, num, show_number=True, use_full=False):
     data = manifest["projects"][p["slug"]]
     photos = data["photos"]
     videos = data["videos"]
     if photos:
-        thumb, alt = photos[0]["thumb"], photos[0]["alt"]
+        thumb = photos[0]["full"] if use_full else photos[0]["thumb"]
+        alt = photos[0]["alt"]
     elif videos:
         thumb, alt = videos[0]["poster"], videos[0]["title"]
     else:
@@ -192,7 +193,7 @@ def main():
     featured = [p for p in visible if p.get("featured")]
     lead, rest = (featured[0], featured[1:]) if featured else (None, [])
     feature = feature_html(lead, manifest, "", numbers[lead["slug"]]) if lead else ""
-    cards = "\n".join(card_html(p, manifest, "", numbers[p["slug"]]) for p in rest)
+    cards = "\n".join(card_html(p, manifest, "", numbers[p["slug"]], use_full=True) for p in rest)
     parts = config["name"].split(" ", 1)
     name_html = esc(parts[0]) + "<br>" + esc(parts[1]) if len(parts) > 1 else esc(config["name"])
     words = config["name"].split()

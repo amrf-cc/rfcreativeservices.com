@@ -341,6 +341,44 @@ class TestSiteGenerated(unittest.TestCase):
             self.assertIn(marker, text, "styles.css missing %s" % marker)
         self.assertNotIn("zoom-out", text, "styles.css still has zoom-out")
 
+    def test_homepage_cards_use_full_photos(self):
+        manifest = load("assets-manifest.json")
+        card_img = re.compile(r'<div class="thumb"><img src="([^"]+)"')
+        home_srcs = card_img.findall((ROOT / "index.html").read_text())
+        self.assertTrue(home_srcs, "index.html has no feature cards")
+        for src in home_srcs:
+            self.assertNotIn("/thumbs/", src,
+                             "homepage card uses a thumbnail: %s" % src)
+        card_href = re.compile(
+            r'<a class="card" href="gallery/([^"]+)\.html">\s*'
+            r'<div class="thumb"><img src="([^"]+)"')
+
+        def cards_by_slug(page):
+            return {slug: src.split("?", 1)[0]
+                    for slug, src in card_href.findall(page.read_text())}
+
+        projects = manifest["projects"]
+        gallery_cards = cards_by_slug(ROOT / "gallery.html")
+        gallery_checked = 0
+        for slug, data in projects.items():
+            if not data["photos"] or slug not in gallery_cards:
+                continue
+            self.assertEqual(gallery_cards[slug], data["photos"][0]["thumb"],
+                             "gallery card for %s must use photos[0].thumb" % slug)
+            gallery_checked += 1
+        self.assertTrue(gallery_checked, "gallery.html has no photo cards")
+
+        home_cards = cards_by_slug(ROOT / "index.html")
+        home_checked = 0
+        for slug, data in projects.items():
+            if not data["photos"] or slug not in home_cards:
+                continue
+            self.assertEqual(home_cards[slug], data["photos"][0]["full"],
+                             "homepage card for %s must use photos[0].full" % slug)
+            home_checked += 1
+        self.assertTrue(home_checked,
+                        "index.html has no featured photo cards")
+
 
 class TestHardening(unittest.TestCase):
     """Security headers, legal pages, download deterrents, AI-crawler policy."""
