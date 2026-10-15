@@ -178,6 +178,15 @@ def main():
                          + '<span class="last"> %s</span>' % esc(words[-1]))
     else:
         name_masthead = '<span class="w">%s</span>' % esc(config["name"])
+    # Bottom masthead labels render only when at least one has text. The
+    # content manager keeps masthead_labels as three strings; empty strings
+    # switch the row off without removing the capability.
+    bottom_labels = [l for l in config.get("masthead_labels", []) if l and l.strip()]
+    if bottom_labels:
+        labels_bottom = ('\n    <div class="labels bottom">\n%s\n    </div>'
+                         % "\n".join("      <span>%s</span>" % esc(l) for l in bottom_labels))
+    else:
+        labels_bottom = ""
     page = render_page("index.html.tmpl", "", config, {
         "HERO_IMAGE": esc(config["hero_image"]),
         "HERO_IMAGE_PHONE": esc(config.get("hero_image_phone", config["hero_image"])),
@@ -189,9 +198,7 @@ def main():
         "HERO_CUTOUT": esc(config["hero_cutout"]),
         "LABEL_TL": esc(config["title"]),
         "LABEL_TR": esc(config["based"]),
-        "LABEL_B1": esc(config["masthead_labels"][0]),
-        "LABEL_B2": esc(config["masthead_labels"][1]),
-        "LABEL_B3": esc(config["masthead_labels"][2]),
+        "LABELS_BOTTOM": labels_bottom,
         "CTA": esc(config["cta"]),
         "FEATURE": feature,
         "FEATURED_CARDS": cards,
