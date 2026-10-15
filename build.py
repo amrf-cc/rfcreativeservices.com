@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Generate the static site in place from templates + JSON data. Stdlib only."""
+import hashlib
 import html
 import json
 from pathlib import Path
@@ -19,6 +20,27 @@ def tmpl(name):
 
 def esc(s):
     return html.escape(str(s), quote=True)
+
+
+_VERSIONS = {}
+
+
+def asset_url(rel):
+    """Repo-relative media path plus a content fingerprint (?v=<8 hex>).
+
+    The content manager renumbers photo files when they are reordered, so the
+    same URL starts serving a different image. Browsers and the Pages CDN keep
+    showing the old one until their cache expires. A content hash changes the
+    URL exactly when the bytes change, and leaves untouched files byte-stable
+    across rebuilds."""
+    if not rel:
+        return rel
+    if rel not in _VERSIONS:
+        path = ROOT / rel
+        _VERSIONS[rel] = (hashlib.sha1(path.read_bytes()).hexdigest()[:8]
+                          if path.is_file() else "")
+    v = _VERSIONS[rel]
+    return "%s?v=%s" % (rel, v) if v else rel
 
 
 def facts_line(p):
@@ -58,7 +80,7 @@ def card_html(p, manifest, root_prefix, num, show_number=True):
     else:
         thumb, alt = None, ""
     img = ('<div class="thumb"><img src="%s%s" alt="%s" loading="lazy" draggable="false"></div>'
-           % (root_prefix, thumb, esc(alt))) if thumb else ""
+           % (root_prefix, asset_url(thumb), esc(alt))) if thumb else ""
     sub = esc(p["title"]) + ((" · " + esc(p["years"])) if p.get("years") else "")
     num_line = ('          <span class="num">%02d</span>\n' % num) if show_number else ""
     return (
@@ -80,7 +102,7 @@ def feature_html(p, manifest, root_prefix, num):
     data = manifest["projects"][p["slug"]]
     src, alt = lead_media(data)
     media = ('<a class="thumb" href="%sgallery/%s.html"><img src="%s%s" alt="%s" draggable="false"></a>'
-             % (root_prefix, p["slug"], root_prefix, src, esc(alt))) if src else ""
+             % (root_prefix, p["slug"], root_prefix, asset_url(src), esc(alt))) if src else ""
     return (
         '    <div class="feature">\n'
         '      %s\n'
@@ -108,7 +130,7 @@ def video_block_html(v, root_prefix):
     elif v.get("mp4"):
         frame = ('<video controls controlslist="nodownload" draggable="false" preload="none" poster="%s%s" playsinline>'
                  '<source src="%s%s" type="video/mp4"></video>'
-                 % (root_prefix, v["poster"], root_prefix, v["mp4"]))
+                 % (root_prefix, asset_url(v["poster"]), root_prefix, asset_url(v["mp4"])))
     else:
         return ""
     ratio = v.get("ratio") or "16 / 9"
@@ -119,7 +141,8 @@ def video_block_html(v, root_prefix):
 def photo_button_html(ph, root_prefix):
     return ('      <button class="shot" data-full="%s%s" data-alt="%s">'
             '<img src="%s%s" alt="%s" loading="lazy" draggable="false"></button>'
-            % (root_prefix, ph["full"], esc(ph["alt"]), root_prefix, ph["thumb"], esc(ph["alt"])))
+            % (root_prefix, asset_url(ph["full"]), esc(ph["alt"]),
+               root_prefix, asset_url(ph["thumb"]), esc(ph["alt"])))
 
 
 def render_page(template_name, root_prefix, config, extra, page_key="", og_path=""):

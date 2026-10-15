@@ -380,5 +380,35 @@ class TestHardening(unittest.TestCase):
         self.assertIn("'dragstart'", text)
 
 
+class TestMediaVersioning(unittest.TestCase):
+    """Reordering photos in the content manager renames files in place, so a
+    URL can start serving a different image. Every gallery media URL carries a
+    content fingerprint so caches drop the old one."""
+
+    def setUp(self):
+        if not (ROOT / "index.html").exists():
+            self.skipTest("site not built yet — run python3 build.py")
+
+    def test_gallery_media_urls_carry_content_hash(self):
+        import hashlib
+        checked = 0
+        for page in generated_pages():
+            if not page.exists() or page.name == "404.html":
+                continue
+            text = page.read_text()
+            urls = re.findall(r'(?:src|data-full|poster)="([^"]*assets/(?:img|video)/[^"]+)"', text)
+            for url in urls:
+                rel = url.split("?")[0]
+                if "/masthead/" in rel or rel.endswith("og-cover.jpg"):
+                    continue  # fixed hero art, never renumbered
+                self.assertIn("?v=", url, "%s: unversioned media %s" % (page.name, url))
+                target = (page.parent / rel).resolve()
+                want = hashlib.sha1(target.read_bytes()).hexdigest()[:8]
+                self.assertEqual(url.split("?v=")[1], want,
+                                 "%s: stale version on %s" % (page.name, rel))
+                checked += 1
+        self.assertGreater(checked, 0)
+
+
 if __name__ == "__main__":
     unittest.main()
