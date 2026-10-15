@@ -75,6 +75,9 @@ driven by CSS custom properties at the top of `assets/css/styles.css`.
   a two-line lockup sized as `min(calc((min(1240px, 100vw) - 2 * var(--gut)) / 7.263),
   240px)` — 7.263 is the measured width of "ADRIAN RIVERA" per 1px of font size, which
   is what makes the line fill the measure exactly. Re-measure if the name changes.
+  Desktop-only parallax (viewport > 720px and no reduced motion): the masthead is pinned with `position: sticky`, the content slides over it, and the name and labels drift together behind the stack at half the scroll speed via `--mp` set in `main.js` (tune `--name-rate` / `--label-rate` in `styles.css`).
+  Phones, reduced-motion and no-JS visitors keep the static masthead.
+  Content sections need an opaque background or the pinned masthead shows through.
 - **Nav over the photo** — the homepage body carries `has-masthead`; that makes the
   nav fixed, transparent and white until you scroll past the masthead, where JS adds
   `.scrolled` and it returns to the paper style. Other pages keep the light nav.

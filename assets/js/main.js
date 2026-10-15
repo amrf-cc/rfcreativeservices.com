@@ -158,3 +158,40 @@ document.querySelectorAll('form.contact').forEach(function (form) {
   window.addEventListener('resize', update);
 })();
 
+// Parallax: the pinned masthead stays put while the page slides over it and the
+// name/labels drift up behind the stack. Desktop + motion-OK only.
+(function () {
+  var mast = document.querySelector('.masthead');
+  if (!mast || !window.matchMedia) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var mq = window.matchMedia('(min-width: 721px)');
+  if (!mq.matches) return;
+
+  var ticking = false;
+  function paint() {
+    ticking = false;
+    var y = Math.max(0, Math.min(window.scrollY, mast.offsetHeight));
+    mast.style.setProperty('--mp', (-y) + 'px');
+    mast.style.visibility = (window.scrollY > mast.offsetHeight + 40) ? 'hidden' : '';
+  }
+  function schedule() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(paint);
+  }
+  function onMq() {
+    if (mq.matches) {
+      schedule();
+    } else {
+      mast.style.removeProperty('--mp');
+      mast.style.visibility = '';
+    }
+  }
+
+  paint();
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+  if (mq.addEventListener) { mq.addEventListener('change', onMq); }
+  else if (mq.addListener) { mq.addListener(onMq); }
+})();
+

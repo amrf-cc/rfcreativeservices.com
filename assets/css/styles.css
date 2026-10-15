@@ -173,6 +173,8 @@ section + section { border-top: 1px solid var(--line-soft); }
   overflow: hidden;
   isolation: isolate;
   background: #131210;
+  --name-rate: .5;
+  --label-rate: .5;
 }
 .masthead .layer {
   position: absolute;
@@ -227,6 +229,20 @@ section + section { border-top: 1px solid var(--line-soft); }
   text-shadow: 0 1px 14px rgba(0,0,0,.5);
 }
 .masthead .labels span { white-space: nowrap; }
+
+/* Parallax: pin the masthead, let the page slide over it. Desktop + motion-OK only. */
+@media (min-width: 721px) and (prefers-reduced-motion: no-preference) {
+  .masthead { position: sticky; top: 0; z-index: 0; }
+  body.has-masthead main > section:not(.masthead),
+  body.has-masthead footer.site {
+    position: relative;
+    z-index: 1;
+    background: var(--paper);
+  }
+  body.has-masthead .masthead + section { box-shadow: 0 -24px 60px rgba(12, 11, 10, .22); }
+  .masthead .name   { transform: translate3d(0, calc(var(--mp, 0px) * var(--name-rate, .5)), 0);  will-change: transform; }
+  .masthead .labels { transform: translate3d(0, calc(var(--mp, 0px) * var(--label-rate, .8)), 0); will-change: transform; }
+}
 
 /* Nav rides over the photograph, then turns solid past it */
 body.has-masthead header.site {

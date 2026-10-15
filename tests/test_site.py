@@ -268,6 +268,53 @@ class TestSiteGenerated(unittest.TestCase):
             self.assertEqual(img.format, "JPEG",
                              "og:image should be JPEG: %s" % rel)
 
+    def test_parallax_css(self):
+        """Desktop parallax block pins the masthead and drifts name/labels."""
+        text = (ROOT / "assets/css/styles.css").read_text()
+        media = (r'@media\s*\(min-width:\s*721px\)\s*and\s*'
+                 r'\(prefers-reduced-motion:\s*no-preference\)')
+        self.assertEqual(len(re.findall(media, text)), 1,
+                         "expected exactly one desktop parallax @media block")
+        start = re.search(media, text)
+        open_brace = text.index("{", start.end())
+        depth = 0
+        for i in range(open_brace, len(text)):
+            if text[i] == "{":
+                depth += 1
+            elif text[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    break
+        block = re.sub(r"\s+", " ", text[open_brace:i + 1])
+
+        pinned = re.search(r"\.masthead\s*\{([^}]*)\}", block)
+        self.assertIsNotNone(pinned, "no .masthead rule in the parallax block")
+        self.assertRegex(pinned.group(1), r"position:\s*sticky")
+
+        content = re.search(
+            r"body\.has-masthead main > section:not\(\.masthead\)\s*,\s*"
+            r"body\.has-masthead footer\.site\s*\{([^}]*)\}", block)
+        self.assertIsNotNone(content, "no content/footer rule in the block")
+        self.assertRegex(content.group(1), r"z-index:\s*1")
+        self.assertRegex(content.group(1), r"background:\s*var\(--paper\)")
+
+        for selector in (r"\.masthead \.name", r"\.masthead \.labels"):
+            rule = re.search(selector + r"\s*\{([^}]*)\}", block)
+            self.assertIsNotNone(rule, "no %s rule in the block" % selector)
+            self.assertRegex(rule.group(1), r"translate3d\([^;]*--mp",
+                             "%s must translate3d with --mp" % selector)
+
+        for rule in re.finditer(r"\.stack[^{}]*\{([^{}]*)\}", text):
+            self.assertNotRegex(rule.group(1), r"\btransform\b",
+                                ".stack must not have a transform")
+
+    def test_parallax_js(self):
+        """main.js drives the parallax offset on scroll."""
+        text = (ROOT / "assets/js/main.js").read_text()
+        self.assertIn("--mp", text)
+        self.assertIn("requestAnimationFrame", text)
+        self.assertIn("prefers-reduced-motion", text)
+
 
 class TestHardening(unittest.TestCase):
     """Security headers, legal pages, download deterrents, AI-crawler policy."""
