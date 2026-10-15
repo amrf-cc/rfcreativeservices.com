@@ -382,20 +382,6 @@
       ],
       "videos": [
         {
-          "title": "Baklava cookie",
-          "mp4": "assets/video/chip-city-v03.mp4",
-          "poster": "assets/video/posters/chip-city-v03.jpg",
-          "livid": "https://livid.com/embed/YuiRmcAvW3kD",
-          "ratio": "9 / 16"
-        },
-        {
-          "title": "Strawberry drop",
-          "mp4": "assets/video/chip-city-v04.mp4",
-          "poster": "assets/video/posters/chip-city-v04.jpg",
-          "livid": "https://livid.com/embed/piLmmru1u77l",
-          "ratio": "9 / 16"
-        },
-        {
           "title": "Chip City Reel",
           "mp4": "",
           "poster": "",
