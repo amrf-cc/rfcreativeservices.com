@@ -5,6 +5,7 @@ Food & beverage portfolio of Adrian Rivera Ferran. Static site, generated in pla
 - `python3 prepare_assets.py --check` — verify source media on the Selected Works volume
 - `python3 prepare_assets.py` — compress selected photos/videos into `assets/`
 - `python3 ingest_media.py` — append newly selected photos from MEDIA_ROOT into `assets/`
+- `python3 scripts/regen_thumbs.py` — rebuild gallery thumbnails at 1280px from the full photos
 - `python3 build.py` — regenerate all HTML pages (commit the output)
 - `python3 -m unittest discover -s tests -v` — run tests
 
@@ -33,6 +34,16 @@ gives it no card, no number and no gallery page (`build.py` deletes a stale
 
 Livid-only videos may have `mp4 = ""` in the manifest: the page renders only the Livid iframe,
 and tests and `prepare_assets.py` do not expect an mp4 file.
+
+## Sharp thumbnails
+
+Gallery grids are displayed at retina densities, where the 640px thumbnails the ingest
+pipeline writes look soft. `python3 scripts/regen_thumbs.py` rebuilds every thumbnail from
+its own full-size photo at a long edge of 1280px and JPEG quality 78 (never upscaling),
+skipping any thumbnail that is already big enough (use `--force` to override, `--dry-run`
+to only preview). Re-run it after uploading via the content manager, since new uploads
+arrive with 640px thumbs. Run `scripts/stamp_metadata.py` afterwards to stamp captions and
+rights back onto the re-encoded files, then `build.py` re-hashes the URLs.
 
 ## Masthead (homepage hero)
 
