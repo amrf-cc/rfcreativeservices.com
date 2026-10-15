@@ -269,5 +269,69 @@ class TestSiteGenerated(unittest.TestCase):
                              "og:image should be JPEG: %s" % rel)
 
 
+class TestHardening(unittest.TestCase):
+    """Security headers, legal pages, download deterrents, AI-crawler policy."""
+
+    def pages(self):
+        names = ["index.html", "gallery.html", "contact.html", "privacy.html", "terms.html"]
+        out = [ROOT / n for n in names]
+        out += sorted((ROOT / "gallery").glob("*.html"))
+        return out
+
+    def csp(self, text):
+        m = re.search(r'<meta http-equiv="Content-Security-Policy" content="([^"]+)">', text)
+        return m.group(1) if m else None
+
+    def test_security_meta_on_every_page(self):
+        for p in self.pages():
+            text = p.read_text()
+            self.assertIsNotNone(self.csp(text), "no CSP: %s" % p.name)
+            self.assertIn('name="referrer"', text, p.name)
+            self.assertIn('name="robots" content="noai, noimageai"', text, p.name)
+
+    def test_csp_is_strict(self):
+        policy = self.csp((ROOT / "index.html").read_text())
+        self.assertNotIn("'unsafe-eval'", policy)
+        directives = {d.strip().split(" ", 1)[0]: d.strip() for d in policy.split(";") if d.strip()}
+        self.assertEqual(directives["script-src"], "script-src 'self'")
+        self.assertEqual(directives["object-src"], "object-src 'none'")
+
+    def test_legal_pages_linked_from_every_footer(self):
+        for p in self.pages():
+            rp = "../" if p.parent.name == "gallery" else ""
+            text = p.read_text()
+            footer = text[text.index('<footer class="site">'):]
+            self.assertIn('href="%sprivacy.html"' % rp, footer, p.name)
+            self.assertIn('href="%sterms.html"' % rp, footer, p.name)
+
+    def test_legal_pages_carry_copy(self):
+        self.assertIn("Formspree", (ROOT / "privacy.html").read_text())
+        terms = (ROOT / "terms.html").read_text()
+        self.assertIn("No AI training or scraping", terms)
+        self.assertIn("Article 4(3)", terms)
+
+    def test_media_not_draggable(self):
+        for p in self.pages():
+            text = p.read_text()
+            for tag in re.findall(r"<img\b[^>]*>", text):
+                self.assertIn('draggable="false"', tag, "%s: %s" % (p.name, tag))
+            for tag in re.findall(r"<video\b[^>]*>", text):
+                self.assertIn('controlslist="nodownload"', tag, "%s: %s" % (p.name, tag))
+
+    def test_robots_blocks_ai_crawlers_only(self):
+        text = (ROOT / "robots.txt").read_text()
+        for bot in ("GPTBot", "CCBot", "Google-Extended", "ClaudeBot"):
+            self.assertIn("User-agent: %s\n" % bot, text)
+        groups = [g for g in text.strip().split("\n\n") if "User-agent" in g]
+        self.assertIn("Disallow: /", groups[0])
+        self.assertTrue(groups[-1].strip().endswith("User-agent: *\nAllow: /"))
+        self.assertNotIn("User-agent: Googlebot\n", text)
+
+    def test_js_blocks_context_menu_and_drag(self):
+        text = (ROOT / "assets/js/main.js").read_text()
+        self.assertIn("'contextmenu'", text)
+        self.assertIn("'dragstart'", text)
+
+
 if __name__ == "__main__":
     unittest.main()

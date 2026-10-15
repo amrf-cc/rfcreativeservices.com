@@ -68,6 +68,24 @@ document.querySelectorAll('form.contact').forEach(function (form) {
   });
 });
 
+// Download deterrent: suppress the image/video context (long-press save) menu
+// and native drag-out. Scoped to media so text, nav links and the form keep
+// their normal menus; the lightbox and card links still open as usual.
+(function () {
+  document.addEventListener('contextmenu', function (e) {
+    var t = e.target;
+    if (t && t.closest && t.closest('img, video, picture, .shot, .lightbox, .masthead, .thumb, .frame')) {
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('dragstart', function (e) {
+    var t = e.target;
+    if (t && t.closest && t.closest('img, video')) {
+      e.preventDefault();
+    }
+  });
+})();
+
 // Scroll reveal. Classes are added here (not in the HTML) so the page stays
 // fully visible if JS is off or fails. A scroll sweep backs up the observer:
 // a fast or jumped scroll can skip an element entirely, and a skipped element

@@ -57,7 +57,7 @@ def card_html(p, manifest, root_prefix, num, show_number=True):
         thumb, alt = videos[0]["poster"], videos[0]["title"]
     else:
         thumb, alt = None, ""
-    img = ('<div class="thumb"><img src="%s%s" alt="%s" loading="lazy"></div>'
+    img = ('<div class="thumb"><img src="%s%s" alt="%s" loading="lazy" draggable="false"></div>'
            % (root_prefix, thumb, esc(alt))) if thumb else ""
     sub = esc(p["title"]) + ((" · " + esc(p["years"])) if p.get("years") else "")
     num_line = ('          <span class="num">%02d</span>\n' % num) if show_number else ""
@@ -79,7 +79,7 @@ def card_html(p, manifest, root_prefix, num, show_number=True):
 def feature_html(p, manifest, root_prefix, num):
     data = manifest["projects"][p["slug"]]
     src, alt = lead_media(data)
-    media = ('<a class="thumb" href="%sgallery/%s.html"><img src="%s%s" alt="%s"></a>'
+    media = ('<a class="thumb" href="%sgallery/%s.html"><img src="%s%s" alt="%s" draggable="false"></a>'
              % (root_prefix, p["slug"], root_prefix, src, esc(alt))) if src else ""
     return (
         '    <div class="feature">\n'
@@ -104,9 +104,9 @@ def feature_html(p, manifest, root_prefix, num):
 def video_block_html(v, root_prefix):
     if v.get("livid"):
         frame = ('<iframe src="%s" allow="autoplay; fullscreen; picture-in-picture" '
-                 'allowfullscreen title="%s"></iframe>' % (esc(v["livid"]), esc(v["title"])))
+                 'allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="%s"></iframe>' % (esc(v["livid"]), esc(v["title"])))
     elif v.get("mp4"):
-        frame = ('<video controls preload="none" poster="%s%s" playsinline>'
+        frame = ('<video controls controlslist="nodownload" draggable="false" preload="none" poster="%s%s" playsinline>'
                  '<source src="%s%s" type="video/mp4"></video>'
                  % (root_prefix, v["poster"], root_prefix, v["mp4"]))
     else:
@@ -118,7 +118,7 @@ def video_block_html(v, root_prefix):
 
 def photo_button_html(ph, root_prefix):
     return ('      <button class="shot" data-full="%s%s" data-alt="%s">'
-            '<img src="%s%s" alt="%s" loading="lazy"></button>'
+            '<img src="%s%s" alt="%s" loading="lazy" draggable="false"></button>'
             % (root_prefix, ph["full"], esc(ph["alt"]), root_prefix, ph["thumb"], esc(ph["alt"])))
 
 
@@ -137,6 +137,7 @@ def render_page(template_name, root_prefix, config, extra, page_key="", og_path=
         BASED=esc(config["based"]), EMAIL=esc(config["email"]),
         INSTAGRAM_LINK=instagram)
     form = tmpl("contact_form.html.tmpl").safe_substitute(
+        ROOT_PREFIX=root_prefix,
         FORMSPREE_ENDPOINT=esc(config.get("formspree_endpoint", "")),
         EMAIL=esc(config["email"]))
     vars_ = {
@@ -207,6 +208,20 @@ def main():
     page = render_page("contact.html.tmpl", "", config, {}, page_key="contact", og_path="contact.html")
     (ROOT / "contact.html").write_text(page)
 
+    # privacy.html + terms.html
+    legal = (
+        ("privacy", "Privacy Notice", "How riveraferran.com handles your information."),
+        ("terms", "Terms of Use", "Copyright, permitted use, and the no-AI-training terms for riveraferran.com."),
+    )
+    for slug, title, desc in legal:
+        body = (ROOT / "templates" / "legal" / (slug + ".body.html")).read_text()
+        page = render_page("legal.html.tmpl", "", config, {
+            "LEGAL_TITLE": esc(title),
+            "LEGAL_DESC": esc(desc),
+            "LEGAL_BODY": body,
+        }, page_key="legal", og_path=slug + ".html")
+        (ROOT / (slug + ".html")).write_text(page)
+
     # gallery/<slug>.html
     (ROOT / "gallery").mkdir(exist_ok=True)
     for p in projects:
@@ -244,7 +259,7 @@ def main():
     (ROOT / "404.html").write_text(page)
     (ROOT / "CNAME").write_text(config["domain"] + "\n")
 
-    print("Built index.html, gallery.html, contact.html, 404.html, CNAME, "
+    print("Built index.html, gallery.html, contact.html, privacy.html, terms.html, 404.html, CNAME, "
           "and %d project pages. BUILD_OK" % len(visible))
 
 
