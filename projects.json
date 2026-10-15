@@ -313,18 +313,6 @@
       ],
       "videos": [
         {
-          "title": "Product lineup",
-          "src": "Videos/Food/chip-city-cookies-social-media-product-lineup-new-york-city-2024.mov",
-          "livid": "https://livid.com/embed/taKj5uRgk18a",
-          "ratio": "9 / 16"
-        },
-        {
-          "title": "Croissant & coffee",
-          "src": "Videos/Food/chip-city-cookies-social-media-croissant-coffee-new-york-city-2025.mov",
-          "livid": "https://livid.com/embed/hMafIYIca9Wa",
-          "ratio": "9 / 16"
-        },
-        {
           "title": "Baklava cookie",
           "src": "Videos/Food/chip-city-cookies-social-media-baklava-new-york-city-2024.mov",
           "livid": "https://livid.com/embed/YuiRmcAvW3kD",
@@ -334,6 +322,12 @@
           "title": "Strawberry drop",
           "src": "Videos/Food/chip-city-cookies-social-media-video-strawberry-new-york-city-2025.mov",
           "livid": "https://livid.com/embed/piLmmru1u77l",
+          "ratio": "9 / 16"
+        },
+        {
+          "title": "Chip City Reel",
+          "src": "",
+          "livid": "https://livid.com/embed/9noP15mT1z6h",
           "ratio": "9 / 16"
         }
       ]
@@ -418,6 +412,10 @@
           "livid": "https://livid.com/embed/RRaM9Nvh86G9",
           "ratio": "16 / 9"
         }
+      ],
+      "removed_photos": [
+        "Chef Mia Castro/Ep1 Sabor y Sazon-4.jpg",
+        "Chef Mia Castro/THUMBNAIL3.jpg"
       ]
     },
     {
@@ -580,7 +578,16 @@
           "alt": "Massi's Homemade Sandwiches photograph"
         }
       ],
-      "videos": []
+      "videos": [],
+      "removed_photos": [
+        "CUBANO-OPEN.jpg",
+        "PHILLY CHEESESTEAK COMBO.jpg",
+        "VODKA CHICKEN PARM-OPEN.jpg",
+        "Massi's Homemade Sandwiches/CUBANO-CLOSED.jpg",
+        "Massi's Homemade Sandwiches/DIRTY FRIES COMBO-VODKA CHICKEN PARM.jpg",
+        "Massi's Homemade Sandwiches/DIRTY FRIES-VODKA CHICKEN PARM.jpg",
+        "Massi's Homemade Sandwiches/massis-homemade-sandwiches-photographer-new-york-city-202514.jpg"
+      ]
     },
     {
       "slug": "acai-express",
@@ -849,6 +856,13 @@
         }
       ],
       "videos": [],
+      "removed_photos": [
+        "Bowl-basket-photographer-new-york-city-2024-1.jpg",
+        "Bowl-basket-photographer-new-york-city-2024-2.jpg",
+        "Bowl-basket-photographer-new-york-city-2024-3.jpg",
+        "chef-mia-castro-food-photographer-new-york-city-2024-1.jpg",
+        "chef-mia-castro-food-photographer-new-york-city-2024-2.jpg"
+      ],
       "hidden": true
     },
     {
