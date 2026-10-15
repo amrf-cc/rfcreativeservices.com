@@ -380,15 +380,46 @@ body.has-masthead header.site.scrolled .nav-toggle { color: var(--ink); border-c
   position: fixed;
   inset: 0;
   z-index: 120;
-  background: rgba(14, 13, 12, 0.94);
+  background: rgba(14, 13, 12, 0.95);
   display: none;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  cursor: zoom-out;
 }
 .lightbox.open { display: flex; }
-.lightbox img { max-width: 100%; max-height: 92vh; object-fit: contain; border-radius: 6px; }
+.lb-stage { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 100%; }
+.lightbox .lb-stage img {
+  max-width: 100%;
+  max-height: calc(100vh - 120px);
+  max-height: calc(100dvh - 120px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+}
+.lb-cap { display: flex; gap: 14px; align-items: baseline; justify-content: center; color: rgba(255, 255, 255, .78); font-size: 14px; line-height: 1.4; text-align: center; }
+.lb-count { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .06em; color: #fff; white-space: nowrap; }
+.lb-btn {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .28);
+  background: rgba(20, 19, 18, .6);
+  color: #fff;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+.lb-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lb-btn:hover, .lb-btn:focus-visible { background: var(--accent); border-color: var(--accent); outline: none; }
+.lb-close { top: 18px; right: 18px; }
+.lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+.lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
+.lightbox.single .lb-prev, .lightbox.single .lb-next { display: none; }
 
 /* ---- Video blocks ------------------------------------------------------- */
 .videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 26px; margin-top: 32px; }
@@ -579,4 +610,14 @@ img, video {
 }
 @media (max-width: 720px) {
   .legal { padding-top: 64px; }
+}
+
+/* Lightbox responsive: kept after the main 720px block so the phone layout
+   rules above are the first @media (max-width: 720px) block in this file. */
+@media (max-width: 720px) {
+  .lightbox { padding: 12px; }
+  .lightbox .lb-stage img { max-height: calc(100vh - 190px); max-height: calc(100dvh - 190px); }
+  .lb-prev, .lb-next { top: auto; bottom: 18px; transform: none; }
+  .lb-prev { left: 18px; }
+  .lb-next { right: 18px; }
 }

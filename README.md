@@ -64,6 +64,11 @@ driven by CSS custom properties at the top of `assets/css/styles.css`.
 - **Photos are shown at their native ratios** — cards and photo grids use CSS
   masonry (`columns`), not fixed aspect-ratio boxes, so portrait food shots are not
   cropped.
+- **Photo viewer** — project pages open photos in a full-screen viewer. Browse the
+  whole project with the prev/next buttons, the Left/Right/Home/End/Esc keys, or a
+  swipe on touch (it wraps around), with a counter and a caption taken from the photo
+  alt text; neighbouring photos are preloaded. Only `templates/project.html.tmpl`
+  carries the viewer markup.
 - **Masthead (homepage hero)** — a full-bleed photograph with the name passing
   BEHIND its subject. Three layers: `assets/img/<project>/NN.jpg` as the back plate,
   the giant name, then `assets/img/masthead/front.webp` — the subject cut out with

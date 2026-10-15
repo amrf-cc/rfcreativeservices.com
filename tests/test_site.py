@@ -315,6 +315,32 @@ class TestSiteGenerated(unittest.TestCase):
         self.assertIn("requestAnimationFrame", text)
         self.assertIn("prefers-reduced-motion", text)
 
+    def test_project_pages_have_lightbox_controls(self):
+        for page in sorted((ROOT / "gallery").glob("*.html")):
+            text = page.read_text()
+            if 'class="shot"' not in text:
+                continue
+            for marker in ('id="lightbox"', 'role="dialog"', "lb-prev",
+                           "lb-next", "lb-close", "lb-count"):
+                self.assertIn(marker, text, "%s missing %s" % (page.name, marker))
+        for name in ("index.html", "gallery.html", "contact.html"):
+            page = ROOT / name
+            if page.exists():
+                self.assertNotIn('id="lightbox"', page.read_text(),
+                                 "%s must not carry the lightbox" % name)
+
+    def test_lightbox_js_browse_controls(self):
+        text = (ROOT / "assets/js/main.js").read_text()
+        for marker in ("ArrowRight", "ArrowLeft", "Escape", "Home", "End",
+                       "touchstart", "touchend", "lb-prev", "lb-next", "preload"):
+            self.assertIn(marker, text, "main.js missing %s" % marker)
+
+    def test_lightbox_css_controls(self):
+        text = (ROOT / "assets/css/styles.css").read_text()
+        for marker in (".lb-prev", ".lb-next", ".lb-close", ".lightbox.single"):
+            self.assertIn(marker, text, "styles.css missing %s" % marker)
+        self.assertNotIn("zoom-out", text, "styles.css still has zoom-out")
+
 
 class TestHardening(unittest.TestCase):
     """Security headers, legal pages, download deterrents, AI-crawler policy."""
