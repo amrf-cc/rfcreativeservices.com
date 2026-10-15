@@ -134,5 +134,26 @@ class TestIngestIdempotent(unittest.TestCase):
         self.assertEqual(ingest_media.plan(projects, manifest), [])
 
 
+class TestIngestSkipsRemoved(unittest.TestCase):
+    """A photo deleted in the content manager is recorded in the project's
+    removed_photos list; ingest must never re-import its original."""
+
+    def test_removed_photos_not_reingested(self):
+        import tempfile
+        slug, folder = next(iter(ingest_media.FOLDERS.items()))
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / folder).mkdir()
+            # Ingest only looks at extension and content hash, so distinct
+            # bytes are enough; no image library needed.
+            for name in ("kept.jpg", "deleted.jpg", "new.jpg"):
+                (Path(tmp) / folder / name).write_bytes(name.encode())
+            project = {"slug": slug, "client": "X", "photos": [{"src": folder + "/kept.jpg", "alt": "k"}],
+                       "videos": [], "removed_photos": [folder + "/deleted.jpg"]}
+            manifest = {"projects": {slug: {"photos": [{}], "videos": []}}}
+            plan = ingest_media.plan({"projects": [project]}, manifest, media_root=Path(tmp))
+            names = [i["rel_src"].split("/")[-1] for e in plan for i in e["items"]]
+            self.assertEqual(names, ["new.jpg"])
+
+
 if __name__ == "__main__":
     unittest.main()

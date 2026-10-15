@@ -146,12 +146,18 @@ def plan_with_stats(projects, manifest, media_root=MEDIA_ROOT):
         kept, dupes = dedupe(candidates)
 
         existing = set()
+        removed = set()
         if project is not None:
             for photo in project.get("photos", []):
                 existing.add(str(photo.get("src", "")).split("/")[-1])
+            # Photos Adrian deleted in the content manager. Their originals
+            # still sit in the media folder, so without this list an
+            # append-only ingest would quietly bring them back.
+            for src in project.get("removed_photos", []):
+                removed.add(str(src).split("/")[-1])
 
         already = [p for p in kept if p.name in existing]
-        appended = [p for p in kept if p.name not in existing]
+        appended = [p for p in kept if p.name not in existing and p.name not in removed]
 
         current_total = len(project.get("photos", [])) if project is not None else 0
         client = project.get("client", folder_name) if project is not None else folder_name
