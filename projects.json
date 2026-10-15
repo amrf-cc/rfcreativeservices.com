@@ -11,12 +11,16 @@
       "description": "Every photo and video for every channel of NYC's cult cookie brand, start to finish. Everything but the graphic design. That covered seasonal drops, new flavors, and collaborations with Eggo, Pop-Tarts, Pringles, Peeps, Philadelphia Cream Cheese, and JetBlue.",
       "photos": [
         {
-          "src": "BBC-Crookie-8.9-2.jpg",
-          "alt": "Chip City BBC crookie"
+          "src": "crookie-tiramisu-7.25-5.jpg",
+          "alt": "Crookie tiramisu"
         },
         {
           "src": "Chip City x Eggo popping out of toaster.jpg",
           "alt": "Chip City x Eggo crookie popping out of a toaster"
+        },
+        {
+          "src": "BBC-Crookie-8.9-2.jpg",
+          "alt": "Chip City BBC crookie"
         },
         {
           "src": "CHURRO-7.2.25-8.jpg",
@@ -25,10 +29,6 @@
         {
           "src": "Berry New Weekend-2.jpg",
           "alt": "Berry New Weekend cookie"
-        },
-        {
-          "src": "crookie-tiramisu-7.25-5.jpg",
-          "alt": "Crookie tiramisu"
         },
         {
           "src": "Red Velvet Cheesecake-6.24.25-5.jpg",
@@ -503,7 +503,7 @@
       "location": "Puerto Rico",
       "years": "2021–2022",
       "role": "Photographer & Videographer",
-      "featured": true,
+      "featured": false,
       "description": "Sobao by Los Cidrines and La Bodeguita de Manolo share one address in San Juan. Sobao is the bakery and restaurant from Los Cidrines, an iconic Puerto Rico bakery name. The Bodeguita is the speakeasy hidden inside: a camouflaged door, moody ambiance, natural wood, exposed bulbs. I shot product photography and social video for both as one project.",
       "photos": [
         {
@@ -593,7 +593,7 @@
       "location": "Puerto Rico",
       "years": "2019",
       "role": "Photographer",
-      "featured": false,
+      "featured": true,
       "description": "Açaí Express went from one surfside food truck in San Juan to Puerto Rico's largest açaí brand. I shot product photography for them, and directed my first TV commercial — it aired during the Super Bowl broadcast in Puerto Rico.",
       "photos": [
         {
@@ -769,6 +769,10 @@
       "description": "Gyro King has held the same corner at 50 E. Fordham Road for over 50 years — same owner, same recipes. I shot part of the menu for DoorDash, then stayed for store and operations photos that show how the place works. The brief I gave myself: capture the raw essence of a Bronx institution.",
       "photos": [
         {
+          "src": "Gyro King/Store & Operations-37.jpg",
+          "alt": "Store & Operations, Gyro King"
+        },
+        {
           "src": "Gyro King/Chicken Gyro.jpg",
           "alt": "Chicken Gyro, Gyro King"
         },
@@ -810,10 +814,6 @@
         },
         {
           "src": "Gyro King/Store & Operations-35.jpg",
-          "alt": "Store & Operations, Gyro King"
-        },
-        {
-          "src": "Gyro King/Store & Operations-37.jpg",
           "alt": "Store & Operations, Gyro King"
         },
         {
