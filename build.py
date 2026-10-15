@@ -56,11 +56,13 @@ def tag_text(photos, videos):
     return "Photo"
 
 
-def lead_media(data):
-    """Photo for the lead feature block: prefer the second shot so it never
-    repeats the hero image."""
+def lead_media(data, hero_paths=()):
+    """Photo for the lead feature block: the project's cover (photo 01), the
+    same one the cards and the Portfolio page use, so the cover set in the
+    content manager wins everywhere. Falls back to the second shot only when
+    the cover is itself the homepage hero, so the hero never repeats."""
     photos = data["photos"]
-    if len(photos) > 1:
+    if len(photos) > 1 and photos[0]["full"] in hero_paths:
         return photos[1]["full"], photos[1]["alt"]
     if photos:
         return photos[0]["full"], photos[0]["alt"]
@@ -99,9 +101,9 @@ def card_html(p, manifest, root_prefix, num, show_number=True, use_full=False):
     )
 
 
-def feature_html(p, manifest, root_prefix, num):
+def feature_html(p, manifest, root_prefix, num, hero_paths=()):
     data = manifest["projects"][p["slug"]]
-    src, alt = lead_media(data)
+    src, alt = lead_media(data, hero_paths)
     media = ('<a class="thumb" href="%sgallery/%s.html"><img src="%s%s" alt="%s" draggable="false"></a>'
              % (root_prefix, p["slug"], root_prefix, asset_url(src), esc(alt))) if src else ""
     return (
@@ -192,7 +194,8 @@ def main():
     bio = "\n".join("      <p>%s</p>" % esc(b) for b in config["bio"])
     featured = [p for p in visible if p.get("featured")]
     lead, rest = (featured[0], featured[1:]) if featured else (None, [])
-    feature = feature_html(lead, manifest, "", numbers[lead["slug"]]) if lead else ""
+    hero_paths = {config.get("hero_image"), config.get("hero_image_phone")} - {None, ""}
+    feature = feature_html(lead, manifest, "", numbers[lead["slug"]], hero_paths) if lead else ""
     cards = "\n".join(card_html(p, manifest, "", numbers[p["slug"]], use_full=True) for p in rest)
     parts = config["name"].split(" ", 1)
     name_html = esc(parts[0]) + "<br>" + esc(parts[1]) if len(parts) > 1 else esc(config["name"])

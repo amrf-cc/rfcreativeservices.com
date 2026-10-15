@@ -444,6 +444,31 @@ class TestHardening(unittest.TestCase):
         self.assertIn("'dragstart'", text)
 
 
+class TestLeadUsesCover(unittest.TestCase):
+    """The homepage lead block shows the project's cover (photo 01), the same
+    photo the cards use, unless that photo is itself the homepage hero."""
+
+    def test_lead_media_rule(self):
+        import build
+        data = {"photos": [{"full": "a/01.jpg", "alt": "one"}, {"full": "a/02.jpg", "alt": "two"}],
+                "videos": []}
+        self.assertEqual(build.lead_media(data, {"x/hero.jpg"}), ("a/01.jpg", "one"))
+        self.assertEqual(build.lead_media(data, {"a/01.jpg"}), ("a/02.jpg", "two"))
+
+    def test_built_lead_is_cover(self):
+        if not (ROOT / "index.html").exists():
+            self.skipTest("site not built yet")
+        idx = (ROOT / "index.html").read_text()
+        m = re.search(r'<div class="feature">\s*<a class="thumb" href="gallery/([^"]+)\.html">'
+                      r'<img src="([^"?]+)', idx)
+        self.assertTrue(m, "no lead feature block on index.html")
+        slug, src = m.group(1), m.group(2)
+        config = load("site-config.json")
+        cover = load("assets-manifest.json")["projects"][slug]["photos"][0]["full"]
+        if cover not in (config.get("hero_image"), config.get("hero_image_phone")):
+            self.assertEqual(src, cover, "lead block for %s is not its cover photo" % slug)
+
+
 class TestMediaVersioning(unittest.TestCase):
     """Reordering photos in the content manager renames files in place, so a
     URL can start serving a different image. Every gallery media URL carries a
