@@ -1,5 +1,5 @@
-# riveraferran.com: search indexing welcome. AI training and scraping not permitted.
-# See https://riveraferran.com/terms.html
+# rfcreativeservices.com: search indexing welcome. AI training and scraping not permitted.
+# See https://rfcreativeservices.com/terms.html
 
 User-agent: GPTBot
 User-agent: ChatGPT-User

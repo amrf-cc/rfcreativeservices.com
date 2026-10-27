@@ -244,8 +244,8 @@ def main():
 
     # privacy.html + terms.html
     legal = (
-        ("privacy", "Privacy Notice", "How riveraferran.com handles your information."),
-        ("terms", "Terms of Use", "Copyright, permitted use, and the no-AI-training terms for riveraferran.com."),
+        ("privacy", "Privacy Notice", "How %s handles your information." % config["domain"]),
+        ("terms", "Terms of Use", "Copyright, permitted use, and the no-AI-training terms for %s." % config["domain"]),
     )
     for slug, title, desc in legal:
         body = (ROOT / "templates" / "legal" / (slug + ".body.html")).read_text()

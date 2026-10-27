@@ -162,7 +162,8 @@ class TestSiteGenerated(unittest.TestCase):
             self.assertEqual(hits, [], "root-relative URLs in %s" % page.name)
 
     def test_cname(self):
-        self.assertEqual((ROOT / "CNAME").read_text().strip(), "riveraferran.com")
+        self.assertEqual((ROOT / "CNAME").read_text().strip(), load("site-config.json")["domain"])
+        self.assertEqual(load("site-config.json")["domain"], "rfcreativeservices.com")
 
     def test_masthead_picture_markup(self):
         config = load("site-config.json")

@@ -1,6 +1,8 @@
-# riveraferran.com
+# rfcreativeservices.com
 
 Food & beverage portfolio of Adrian Rivera Ferran. Static site, generated in place.
+
+This repo serves **rfcreativeservices.com**. It began as a copy of `amrf-cc/riveraferran.com` (full history kept, remote `f`), which keeps serving riveraferran.com. GitHub Pages allows one custom domain per repo, so each domain has its own repo.
 
 - `python3 prepare_assets.py --check` — verify source media on the Selected Works volume
 - `python3 prepare_assets.py` — compress selected photos/videos into `assets/`
@@ -9,7 +11,7 @@ Food & beverage portfolio of Adrian Rivera Ferran. Static site, generated in pla
 - `python3 build.py` — regenerate all HTML pages (commit the output)
 - `python3 -m unittest discover -s tests -v` — run tests
 
-Deploy: GitHub Pages serves this repo's `main` branch root at https://riveraferran.com.
+Deploy: GitHub Pages serves this repo's `main` branch root at https://rfcreativeservices.com.
 Videos: Livid embeds when configured in projects.json, else self-hosted MP4.
 Form: Formspree endpoint in site-config.json, mailto fallback when empty.
 
